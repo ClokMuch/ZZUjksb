@@ -1,7 +1,6 @@
 #ZZUjksb自动填写 Ver 1.6
-ver = 1.6
 #By Clok Much
-'''
+
 0 说明
     0.0 此仅供参考学习，请在执行代码前仔细检查是否合理，如认为
         不合理，请不要运行.
@@ -74,25 +73,3 @@ ver = 1.6
             如果此程序出现问题，或有其他改进方案，或者想要和我一
             起打游戏（QwQ），可通过以下电邮联系我：
                 1831158739@qq.com
-'''
-
-#导入所需库与函数体
-from time import sleep
-from jksb import *
-
-#简述版本情况
-print("jksb.Ver" + str(ver) + '\n')
-
-#创建或读取配置文件
-chk_config()
-
-###以下为运行部分###
-#检查今日是否已运行
-run()
-#没有上报时的流程
-print("\n今天没有运行 jksb ，正在准备上报...")
-jksb()
-creat_inct(get_name())
-#说明
-print("\n\n\n运行结束！您可以直接关闭本窗口和一同打开的浏览器.")
-input()
