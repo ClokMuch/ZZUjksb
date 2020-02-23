@@ -1,20 +1,17 @@
+#ZZUjksb-FunctionPool
+#Pool.Ver.1.3
+
+
 ###以下为函数体部分###
 
 ##用户配置信息相关##
-#函数体：创建配置
-def creat_config():
-    from os import mkdir
-    uid = input('输入你的学号（12位）：\n')
-    while len(uid) != 12:
-        uid = input('你的输入长度有误，请再次输入：\n')
-    upw = input('输入你的密码：\n')
-    open('uid','w').write(uid)
-    open('upw','w').write(upw)
-    mkdir(get_config() + '\\')
-
 #函数体：读取配置
 def get_config(config_name='inct_dir'):
-    '''默认返回指示文件目录'''
+    '''
+    默认获取并返回指示文件目录；
+    指定'uid'时获取并返回学号；
+    指定'upw'时获取并返回密码.
+    '''
     if config_name == 'uid':
         uid = open('uid','r').read()
         return uid
@@ -28,27 +25,41 @@ def get_config(config_name='inct_dir'):
 
 #函数体：判断配置是否存在，存在返回 True，否则创建
 def chk_config():
+    '''判断配置是否存在，存在返回 True ，否则创建'''
     from os import path
     if path.exists('uid') and path.exists('upw') and path.exists(get_config()):
         print("检查到存在配置文件，正在载入...")
         return True
-        
     else:
         print("没有创建配置文件，请根据提示进行创建.")
-        creat_config()
+        from os import mkdir
+        uid = input('输入你的学号（12位）：\n')
+        while len(uid) != 12:
+            uid = input('你的输入长度有误，请再次输入：\n')
+        upw = input('输入你的密码：\n')
+        open('uid','w').write(uid)
+        open('upw','w').write(upw)
+        mkdir(get_config() + '\\')
 ##用户配置信息结束##
 
 #函数体：获取当前日期，返回指示文件的文件名
-def get_name(checked=False):
+def get_name(checked=False, page=False):
+    '''
+    默认返回原始文件名，指定 checked=True 时返回带a的文件名，指定 page=True 时返回带 s.png 的文件名；
+    page 参数带有优先性，即两者同时指定 True 时，返回效果与仅指定 page=True 时相同.
+    '''
     import time
     if checked == True:
         name = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日') + 'a'  #直接生成带有中文的名称会报错，似乎是模块自建编码的问题，故使用间接生成
     else:
         name = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日')  #直接生成带有中文的名称会报错，似乎是模块自建编码的问题，故使用间接生成
+    if page == True:
+        name = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日') + '.html'  #直接生成带有中文的名称会报错，似乎是模块自建编码的问题，故使用间接生成
     return name
 
 #函数体：生成指示文件
 def creat_inct(name):
+    '''生成指示文件，只需指定文件名'''
     tmp = get_config() + name
     open(tmp, 'w').write('SUCCEED')
 
@@ -82,6 +93,7 @@ def jksb(check=False):
         fx.find_element_by_name("upw").clear()  #清除原有密码
         fx.find_element_by_name("upw").send_keys(get_config('upw'))  #填入密码
         fx.find_element_by_name("smbtn").click()  #点击登录
+        open(get_config() + get_name(page=True),'wb').write(fx.page_source.encode("utf-8", "ignore"))  #保存网页，以备查询
         #fx.quit()  #不再关闭浏览器，等待查看是否上报成功
 
 #函数体：判断运行情况
