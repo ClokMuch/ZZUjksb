@@ -1,5 +1,5 @@
 #ZZUjksb-FunctionPool
-#Pool.Ver.1.3
+#Pool.Ver.1.4
 
 
 ###以下为函数体部分###
@@ -63,6 +63,13 @@ def creat_inct(name):
     tmp = get_config() + name
     open(tmp, 'w').write('SUCCEED')
 
+#函数体：处理 url ，返回 ptopid
+def get_jksb_result(url):
+    '''填写 url ，返回 jksb 上报后的网址参数 '''
+    tmp = url[53:]
+    return tmp
+
+
 #函数体：进行上报与确认
 def jksb(check=False):
     #准备webdriver（导入与简化不放在开头，以提高运行效率）
@@ -93,6 +100,9 @@ def jksb(check=False):
         fx.find_element_by_name("upw").clear()  #清除原有密码
         fx.find_element_by_name("upw").send_keys(get_config('upw'))  #填入密码
         fx.find_element_by_name("smbtn").click()  #点击登录
+        sleep(5)
+        end = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb?' + get_jksb_result(fx.current_url)
+        fx.get(end)
         open(get_config() + get_name(page=True),'wb').write(fx.page_source.encode("utf-8", "ignore"))  #保存网页，以备查询
         #fx.quit()  #不再关闭浏览器，等待查看是否上报成功
 
