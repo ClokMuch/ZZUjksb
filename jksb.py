@@ -1,5 +1,5 @@
 #ZZUjksb-FunctionPool
-#Pool.Ver.1.4
+#Pool.Ver.1.7
 
 
 ###以下为函数体部分###
@@ -43,10 +43,12 @@ def chk_config():
 ##用户配置信息结束##
 
 #函数体：获取当前日期，返回指示文件的文件名
-def get_name(checked=False, page=False):
+def get_name(checked=False, page=False, png=False):
     '''
-    默认返回原始文件名，指定 checked=True 时返回带a的文件名，指定 page=True 时返回带 s.png 的文件名；
-    page 参数带有优先性，即两者同时指定 True 时，返回效果与仅指定 page=True 时相同.
+    默认返回原始文件名，指定 checked=True 时返回带a的文件名，
+    指定 page=True 时返回带 .html 的文件名，
+    指定 png=True 时返回带 s.png 的文件名
+    后参数带有优先性，即三者同时指定 True 时，返回效果与仅指定 png=True 时相同.
     '''
     import time
     if checked == True:
@@ -55,6 +57,8 @@ def get_name(checked=False, page=False):
         name = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日')  #直接生成带有中文的名称会报错，似乎是模块自建编码的问题，故使用间接生成
     if page == True:
         name = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日') + '.html'  #直接生成带有中文的名称会报错，似乎是模块自建编码的问题，故使用间接生成
+    if png == True:
+        name = time.strftime('%Y{y}%m{m}%d{d}').format(y='年',m='月',d='日') + 's.png'  #直接生成带有中文的名称会报错，似乎是模块自建编码的问题，故使用间接生成
     return name
 
 #函数体：生成指示文件
@@ -85,14 +89,17 @@ def jksb(check=False):
     fx.find_element_by_name("upw").send_keys(get_config('upw'))  #填入密码
     fx.find_element_by_name("smbtn").click()  #点击登录
     if check != True:
+        sleep(5)
+        end = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb?' + get_jksb_result(fx.current_url)
+        fx.get(end)
         sleep(5)  #等待加载，若出现错误可增加等待时间
         fx.switch_to.default_content()  #回到原始框架
-        fx.switch_to.frame("zzj_top_6s")  #切入新的框架
-        fx.find_element_by_xpath("/html/body/form/div[1]/div[17]/div[4]/span").click()  #点击下一步
+        fx.find_element_by_xpath("/html/body/form/div/div[13]/div[3]/div[4]/span").click()  #点击本人填报
         sleep(5)  #等待加载，若出现错误可增加等待时间
-        fx.find_element_by_xpath("/html/body/form/div[1]/div[13]/div[4]/span").click()  #点击上报
+        sleep(10)
+        fx.find_element_by_xpath("/html/body/form/div[1]/div[19]/div[4]/span").click()  #点击上报
         sleep(5)  #等待加载，若出现错误可增加等待时间
-        #fx.find_element_by_xpath("/html/body/form/div[1]/div[2]/div[2]/div[4]/div[2]").click()  #上报完成，点击确认
+        fx.find_element_by_xpath("/html/body/form/div[1]/div[2]/div[2]/div[4]/div[2]").click()  #上报完成，点击确认
         fx.get('http:\\\\jksb.zzu.edu.cn')  #开启网页
         fx.switch_to.frame("my_toprr")  #切换框架到登录
         fx.find_element_by_name("uid").clear()  #清除原有学号
@@ -104,6 +111,7 @@ def jksb(check=False):
         end = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb?' + get_jksb_result(fx.current_url)
         fx.get(end)
         open(get_config() + get_name(page=True),'wb').write(fx.page_source.encode("utf-8", "ignore"))  #保存网页，以备查询
+        fx.get_screenshot_as_file(get_config() + get_name(png=True))
         #fx.quit()  #不再关闭浏览器，等待查看是否上报成功
 
 #函数体：判断运行情况
